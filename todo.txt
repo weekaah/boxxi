@@ -1,0 +1,7 @@
+[x] - update volume icons & mute icon
+[x] - fix ie11 layout
+[x] - fix moz range bar
+[x] - make custom range bar
+
+[ ] - style presentation page
+[ ] - add favicon

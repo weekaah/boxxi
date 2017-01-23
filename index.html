@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Boxxi JS Video Plugin</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link rel="shortcut icon" href="docs/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="dist/css/boxxi.min.css">
+    <!-- <link rel="stylesheet" href="css/boxxi.css"> -->
+    <link rel="stylesheet" href="css/docs.css">
+  </head>
+  <body>
+
+    <br>
+
+    <h1><img width="220px" src="svg/logo.svg" alt="Boxxi"></h1>
+
+    <p>Boxxi is a custom video player plugin written in plain/vanilla JavaScript.</p>
+    <p>It's supported in all modern browsers.</p>
+    <p>No dependency required.</p>
+    <br>
+    <p><a href="">Check out the docs @GitHub</a></p>
+    <br>
+    <br>
+    <br>
+
+    <video class="video" src="video/video.mp4"></video>
+
+  </body>
+  <script src="dist/js/boxxi.min.js"></script>
+  <!-- <script src="js/boxxi.js"></script> -->
+  <script>
+    boxxi('.video',{
+      autoPlay: false
+    });
+  </script>
+</html>
