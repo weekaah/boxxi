@@ -2,7 +2,7 @@
 Boxxi is a simple custom video player plugin written in plain/vanilla JavaScript.
 
 ## Demo
-[Plugin in action](weekaah.github.io/boxxi)
+[Plugin in action](https://weekaah.github.io/boxxi)
 
 ## Installation
 
