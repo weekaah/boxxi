@@ -1,9 +1,7 @@
 (function() {
-
   'use strict';
 
   var Boxx = function (element, settings) {
-
     this.container;
     this.video = element;
     this.controls;
@@ -43,14 +41,12 @@
     this.options = (settings && typeof settings === 'object') ? extendDefaults(this.defaults, settings) : this.defaults;
 
     this.open();
-
-  }
-
+  };
 
   Boxx.prototype = {
-
     open: function() {
       var self = this;
+      
       build.call(this);
       bindEvents.call(this);
 
@@ -58,18 +54,14 @@
         self.time.addIcon(formatTime(0) + ' / ' + formatTime(self.video.elem.duration));
       }, 500);
 
-      if (this.options.autoPlay) toggleVideo.call(this);
-
+      if (this.options.autoPlay) {
+        toggleVideo.call(this);
+      }
     }
-
   };
 
-
   function build() {
-
-    var frag;
-
-    frag = document.createDocumentFragment();
+    var frag = document.createDocumentFragment();
 
     this.container = UI.make()
                        .appendTo(frag)
@@ -145,54 +137,54 @@
 
   }
 
-
-
-
   // UI API
-  //-----------------------------------
-
+  // ==================================
   function UI(elem) {
     this.elem = elem;
   }
-
 
   UI.assign = function(element) {
     var elem = element;
     return new UI(elem);
   }
 
-
   UI.make = function(tag) {
     var elem = document.createElement(tag || 'div');
     return new UI(elem);
   };
 
-
   UI.prototype = {
     addClass: function(cl) {
       var self = this.elem;
+      
       cl.split(' ').forEach(function(item){
         self.classList.add(item);
       });
+      
       return this;
     },
     toggleClass: function(cl) {
       this.elem.classList.toggle(cl);
+      
       return this;
     },
     addLabel: function(label) {
       this.elem.title = label;
+      
       return this;
     },
     addIcon: function(icon) {
       this.elem.innerHTML = icon;
+      
       return this;
     },
     appendTo: function(parent) {
-      if (parent instanceof UI)
-      parent.elem.appendChild(this.elem);
-      else
-      parent.appendChild(this.elem);
+      if (parent instanceof UI) {
+        parent.elem.appendChild(this.elem);
+      } else {
+        parent.appendChild(this.elem);
+      }
+      
       return this;
     },
     addStyles: function(styles) {
@@ -203,36 +195,38 @@
           this.elem.style[prop] = styles[prop];
         }
       }
+      
       return this;
     },
     onClick: function(callback) {
       this.elem.addEventListener('click', callback);
+      
       return this;
     },
     onDrag: function(callback) {
       this.elem.addEventListener('mousedown', function(e) {
         callback(e);
-        this.parentNode.onmousemove = function(e){
+        
+        this.parentNode.onmousemove = function(e) {
           e.preventDefault();
           callback(e);
         };
       });
+      
       this.elem.addEventListener('mouseup', function(e) {
         this.parentNode.onmousemove = null;
       });
+      
       this.elem.addEventListener('mouseleave', function(e) {
         this.parentNode.onmousemove = null;
       });
+      
       return this;
     }
   };
 
-
-
-
-  // UI Actions
-  //-----------------------------------
-
+  // UI actions
+  // ==================================
   function toggleVideo() {
     var that = this,
         video = this.video.elem,
@@ -244,9 +238,11 @@
       video.play();
       toggle.addIcon(this.pauseIcon);
       toggle.addLabel(this.options.pauseLabel);
+      
       checkTime = setInterval(function () {
         updateTime.call(that);
       }, 1000);
+      
       checkProgress = setInterval(function () {
         updateProgress.call(that);
       }, 500);
@@ -254,17 +250,20 @@
       video.pause();
       toggle.addIcon(this.playIcon);
       toggle.addLabel(this.options.playLabel);
+      
       clearInterval(checkTime);
+      
       clearInterval(checkProgress);
     }
   }
 
-
   function stopVideo() {
     var self = this,
         video = this.video.elem;
+        
     video.currentTime = 0;
     updateTime.call(this);
+    
     setTimeout(function() {
       video.pause();
       self.toggle.addIcon(self.playIcon);
@@ -272,12 +271,10 @@
     }, 10);
   }
 
-
   function toggleFullScreen() {
     this.container.toggleClass('boxxi--full');
 
     if (this.fullScreen) {
-
       this.full.addIcon(this.fullIcon);
       this.full.addLabel(this.options.fullLabel);
     } else {
@@ -288,32 +285,28 @@
     this.fullScreen = !this.fullScreen;
   }
 
-
   function toggleMute() {
     var video = this.video.elem,
         rangeLevel = this.rangeline.elem;
 
-    if (video.volume != 0) {
+    if (video.volume !== 0) {
       video.volume = 0;
       rangeLevel.style.width = '0%';
     } else {
-      // if the last stored volume level is 0 than restore it to half volume
       var volumeLevel = (this.volumeLevel != 0) ? this.volumeLevel : 0.5;
+      
       video.volume = volumeLevel;
-      // update width of volume range accoding to volume level
       rangeLevel.style.width = (volumeLevel * 100) + '%';
     }
 
-    // change Mute icon and label accordingly
     updateVolumeLabels.call(this);
   }
-
 
   function updateVolumeLabels() {
     var mute = this.mute,
         volume = this.video.elem.volume;
 
-    if (volume == 0) {
+    if (volume === 0) {
       mute.addIcon(this.muteIcon);
       mute.addLabel(this.options.unmuteLabel);
     } else if (0 < volume && volume <= 0.33) {
@@ -326,29 +319,26 @@
     }
   }
 
-
-  function updateVolume(x) {
+  function updateVolume(volume) {
     // stop if volume is negative
-    if (x < 0) return;
+    if (volume < 0) return;
 
-    if (x < 0.1) {
+    if (volume < 0.1) {
       this.video.elem.volume = 0;
       // store the last volume level for unmute volume restore
       this.volumeLevel = 0;
-    } else if (x > .95) {
+    } else if (volume > 0.95) {
       this.video.elem.volume = 1;
       // store the last volume level for unmute volume restore
       this.volumeLevel = 1;
     } else {
-      this.video.elem.volume = x;
+      this.video.elem.volume = volume;
       // store the last volume level for unmute volume restore
-      this.volumeLevel = x;
+      this.volumeLevel = volume;
     }
   }
 
-
   function volumeChange(e) {
-
     var volumeWidth = Math.floor((e.offsetX / this.rangecontainer.elem.offsetWidth) * 100),
         volumeRate = volumeWidth / 100;
 
@@ -357,16 +347,14 @@
     this.rangeline.elem.style.width = volumeWidth + '%';
     updateVolume.call(this, volumeRate);
     updateVolumeLabels.call(this);
-
   }
-
 
   function jump(e) {
     var jumpTime = (e.offsetX / this.progress.elem.offsetWidth) * this.video.elem.duration;
+    
     this.video.elem.currentTime = jumpTime;
     updateProgress.call(this);
   }
-
 
   function updateTime() {
     var passedTime = formatTime(this.video.elem.currentTime),
@@ -375,44 +363,47 @@
     this.time.addIcon(passedTime + ' / ' + fullTime);
   }
 
-
   function updateProgress() {
     var passedTime = this.video.elem.currentTime,
-    fullTime = this.video.elem.duration;
+        fullTime = this.video.elem.duration;
 
     this.line.elem.style.width = (passedTime / fullTime) * 100 + '%';
   }
 
+  function formatTime(time) {
+    var secNum = Math.floor(time),
+        hours   = Math.floor(secNum / 3600),
+        minutes = Math.floor((secNum - (hours * 3600)) / 60),
+        seconds = secNum - (hours * 3600) - (minutes * 60);
 
-  function formatTime(time){
-    var sec_num = Math.floor(time),
-        hours   = Math.floor(sec_num / 3600),
-        minutes = Math.floor((sec_num - (hours * 3600)) / 60),
-        seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-    if (hours < 10) hours = '0' + hours;
-    if (minutes < 10) minutes = '0' + minutes;
-    if (seconds < 10) seconds = '0' + seconds;
+    if (hours < 10) {
+      hours = '0' + hours;
+    }
+    
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+    
+    if (seconds < 10) {
+      seconds = '0' + seconds;
+    } 
 
     return hours + ':' + minutes + ':' + seconds;
   }
 
-
-
-
-  // Helpers
-  //-----------------------------------
-
+  // helpers
+  // ==================================
   function extendDefaults(source, properties) {
     var property;
+    
     for (property in properties) {
       if (properties.hasOwnProperty(property)) {
         source[property] = properties[property];
       }
     }
+    
     return source;
   }
-
 
   function bindEvents() {
     var boxxiObj = this, // reference to Boxxi obj
@@ -451,15 +442,15 @@
 
     // toggle full screen on fullscreen button click
     this.full.elem.addEventListener('click', toggleFullScreen.bind(this));
-
   }
 
-
+  // export
+  // ==================================
   window.boxxi = function(selector, settings) {
     var videos = document.querySelectorAll(selector);
+    
     [].forEach.call(videos, function(item) {
       return new Boxx(item, settings);
     });
   };
-
 })();
