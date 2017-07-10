@@ -1,21 +1,11 @@
 (function() {
   'use strict';
-
   var Boxx = function (element, settings) {
     this.container;
     this.video = element;
-    this.controls;
-    this.progress;
-    this.line;
-    this.time;
-    this.toggle;
-    this.stop;
-    this.speed;
-    this.mute;
     this.volume = .5;
-    this.rangecontainer;
-    this.rangeline;
-    this.full;
+
+    // icons
     this.playIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 12"><path d="M13 6L1 12V0l12 6z"/></svg>';
     this.pauseIcon = '<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 12"><path class="st0" d="M1 0h3v12H1V0zm9 0h3v12h-3V0z"/></svg>';
     this.stopIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 12"><path d="M1 0h12v12H1V0z"/></svg>';
@@ -38,10 +28,13 @@
       autoPlay: false,
     };
 
-    this.options = (settings && typeof settings === 'object') ? extendDefaults(this.defaults, settings) : this.defaults;
+    this.options = extendDefaults(this.defaults, settings);
 
     this.open();
   };
+
+
+
 
   Boxx.prototype = {
     open: function() {
@@ -59,6 +52,9 @@
       }
     }
   };
+
+
+
 
   function build() {
     var frag = document.createDocumentFragment();
@@ -134,8 +130,10 @@
                   .addIcon(this.fullIcon);
 
     document.body.appendChild(frag);
-
   }
+
+
+
 
   // UI API
   // ==================================
@@ -225,6 +223,9 @@
     }
   };
 
+
+
+
   // UI actions
   // ==================================
   function toggleVideo() {
@@ -257,6 +258,7 @@
     }
   }
 
+
   function stopVideo() {
     var self = this,
         video = this.video.elem;
@@ -271,6 +273,7 @@
     }, 10);
   }
 
+
   function toggleFullScreen() {
     this.container.toggleClass('boxxi--full');
 
@@ -284,6 +287,7 @@
 
     this.fullScreen = !this.fullScreen;
   }
+
 
   function toggleMute() {
     var video = this.video.elem,
@@ -302,6 +306,7 @@
     updateVolumeLabels.call(this);
   }
 
+
   function updateVolumeLabels() {
     var mute = this.mute,
         volume = this.video.elem.volume;
@@ -318,6 +323,7 @@
       mute.addLabel(this.options.muteLabel);
     }
   }
+
 
   function updateVolume(volume) {
     // stop if volume is negative
@@ -338,6 +344,7 @@
     }
   }
 
+
   function volumeChange(e) {
     var volumeWidth = Math.floor((e.offsetX / this.rangecontainer.elem.offsetWidth) * 100),
         volumeRate = volumeWidth / 100;
@@ -349,12 +356,14 @@
     updateVolumeLabels.call(this);
   }
 
+
   function jump(e) {
     var jumpTime = (e.offsetX / this.progress.elem.offsetWidth) * this.video.elem.duration;
     
     this.video.elem.currentTime = jumpTime;
     updateProgress.call(this);
   }
+
 
   function updateTime() {
     var passedTime = formatTime(this.video.elem.currentTime),
@@ -363,12 +372,14 @@
     this.time.addIcon(passedTime + ' / ' + fullTime);
   }
 
+
   function updateProgress() {
     var passedTime = this.video.elem.currentTime,
         fullTime = this.video.elem.duration;
 
     this.line.elem.style.width = (passedTime / fullTime) * 100 + '%';
   }
+
 
   function formatTime(time) {
     var secNum = Math.floor(time),
@@ -391,19 +402,23 @@
     return hours + ':' + minutes + ':' + seconds;
   }
 
+
+
+
   // helpers
   // ==================================
-  function extendDefaults(source, properties) {
+  function extendDefaults(defaults, settings) {
     var property;
     
-    for (property in properties) {
-      if (properties.hasOwnProperty(property)) {
-        source[property] = properties[property];
+    for (property in settings) {
+      if (settings.hasOwnProperty(property)) {
+        defaults[property] = settings[property];
       }
     }
     
-    return source;
+    return defaults;
   }
+
 
   function bindEvents() {
     var boxxiObj = this, // reference to Boxxi obj
@@ -443,6 +458,9 @@
     // toggle full screen on fullscreen button click
     this.full.elem.addEventListener('click', toggleFullScreen.bind(this));
   }
+
+
+
 
   // export
   // ==================================
